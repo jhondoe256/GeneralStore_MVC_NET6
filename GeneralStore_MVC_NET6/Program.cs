@@ -1,3 +1,6 @@
+using GeneralStore.Services.CustomerServices;
+using GeneralStore.Services.ProductServices;
+using GeneralStore.Services.TransactionServices;
 using GeneralStore_MVC_NET6.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +16,11 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+
+
+builder.Services.AddScoped<ICustomerService,CustomerService>();
+builder.Services.AddScoped<IProductService,ProductService>();
+builder.Services.AddScoped<ITransactionService,TransactionService>();
 
 var app = builder.Build();
 
