@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GeneralStore.Data.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,9 @@ namespace GeneralStore.Models.TransactionModels
 {
     public class TransactionListItem
     {
+        public int Id { get; set; }
+        public int ProductId { get; set; }
+        public int CustomerId { get; set; }
+
     }
 }

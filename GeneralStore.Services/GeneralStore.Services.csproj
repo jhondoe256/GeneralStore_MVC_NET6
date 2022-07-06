@@ -11,8 +11,4 @@
     <ProjectReference Include="..\GeneralStore.Models\GeneralStore.Models.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="TransactionServices\" />
-  </ItemGroup>
-
 </Project>

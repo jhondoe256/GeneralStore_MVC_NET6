@@ -10,8 +10,4 @@
     <ProjectReference Include="..\GeneralStore.Data\GeneralStore.Data.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="TransactionModels\" />
-  </ItemGroup>
-
 </Project>

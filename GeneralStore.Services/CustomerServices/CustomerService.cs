@@ -82,8 +82,8 @@ namespace GeneralStore.Services.CustomerServices
 
             if (customerInDb != null)
             {
-                customerInDb.Name = customer.Name;
-                customerInDb.Email = customer.Email;
+                //customerInDb.Name = customer.Name;
+                //customerInDb.Email = customer.Email;
                 try
                 {
                     _context.Update(customerInDb);
@@ -91,7 +91,7 @@ namespace GeneralStore.Services.CustomerServices
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProductExist(customerInDb.Id))
+                    if (!CustomerExist(customerInDb.Id))
                     {
                         return false;
                     }
@@ -104,7 +104,7 @@ namespace GeneralStore.Services.CustomerServices
             return false;
         }
 
-        private bool ProductExist(int id)
+        private bool CustomerExist(int id)
         {
             return _context.Products.Any(p => p.Id == id);
         }
