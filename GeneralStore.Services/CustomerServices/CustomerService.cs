@@ -1,5 +1,7 @@
-﻿using GeneralStore.Models.CustomerModels;
+﻿using GeneralStore.Data.Entities;
+using GeneralStore.Models.CustomerModels;
 using GeneralStore_MVC_NET6.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,29 +18,95 @@ namespace GeneralStore.Services.CustomerServices
         {
             _context = context;
         }
-        public Task<bool> CreateCustomer(CustomerCreate customer)
+        public async Task<bool> CreateCustomer(CustomerCreate customer)
         {
-            throw new NotImplementedException();
+            if (customer != null)
+            {
+                _context.Customers.Add(new Customer
+                {
+                    Name = customer.Name,
+                    Email = customer.Email
+                });
+
+                if (await _context.SaveChangesAsync() == 1)
+                    return true;
+            }
+            return false;
+
         }
 
-        public Task<bool> DeleteCustomer(int customerId)
+        public async Task<bool> DeleteCustomer(int customerId)
         {
-            throw new NotImplementedException();
+            var customer = _context.Customers.Find(customerId);
+            if (customer is null)
+                return false;
+            _context.Customers.Remove(customer);
+            await _context.SaveChangesAsync();
+            return true;
         }
 
-        public Task<CustomerDetail> GetCustomer(int customerId)
+        public async Task<CustomerDetail> GetCustomer(int? customerId)
         {
-            throw new NotImplementedException();
+            if (customerId == null)
+                return null;
+
+            var customer = await _context.Customers.FindAsync(customerId);
+            
+            if (customer is null)
+                return null;
+            
+            return new CustomerDetail
+            {
+                Id = customer.Id,
+                Name = customer.Name,
+                Email = customer.Email
+            };
         }
 
-        public Task<IEnumerable<CustomerIndexModel>> ListCustmers()
+        public async Task<IEnumerable<CustomerIndexModel>> ListCustmers()
         {
-            throw new NotImplementedException();
+            var customers =await _context.Customers.Select(customer => new CustomerIndexModel
+            {
+                Id = customer.Id,
+                Name = customer.Name,
+                Email = customer.Email
+            }).ToListAsync();
+            return customers;
         }
 
-        public Task<bool> UpdateCustomer(int customerId, CustomerEditModel customer)
+        public async Task<bool> UpdateCustomer(int customerId, CustomerEditModel customer)
         {
-            throw new NotImplementedException();
+            var customerInDb = await _context.Customers.FindAsync(customerId);
+            if (customerInDb is null)
+                return false;
+
+            if (customerInDb != null)
+            {
+                customerInDb.Name = customer.Name;
+                customerInDb.Email = customer.Email;
+                try
+                {
+                    _context.Update(customerInDb);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ProductExist(customerInDb.Id))
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+            return false;
+        }
+
+        private bool ProductExist(int id)
+        {
+            return _context.Products.Any(p => p.Id == id);
         }
     }
 }

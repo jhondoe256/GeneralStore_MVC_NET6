@@ -11,7 +11,7 @@ namespace GeneralStore.Services.CustomerServices
     {
         Task<bool> CreateCustomer(CustomerCreate customer);
         Task<IEnumerable<CustomerIndexModel>>ListCustmers();
-        Task<CustomerDetail>GetCustomer(int customerId);
+        Task<CustomerDetail>GetCustomer(int? customerId);
         Task<bool>UpdateCustomer(int customerId, CustomerEditModel customer);
         Task<bool>DeleteCustomer(int customerId);
     }
