@@ -1,4 +1,5 @@
-﻿using GeneralStore.Models.CustomerModels;
+﻿using GeneralStore.Data.Entities;
+using GeneralStore.Models.CustomerModels;
 using GeneralStore.Models.ProductModels;
 using GeneralStore_MVC_NET6.Data;
 using Microsoft.EntityFrameworkCore;
@@ -17,31 +18,91 @@ namespace GeneralStore.Services.ProductServices
         public ProductService(ApplicationDbContext context)
         {
             _context = context;
-            _context = context;
         }
-        public Task<bool> CreateProduct(ProductCreateModel product)
+        public async Task<bool> CreateProduct(ProductCreateModel product)
         {
-            throw new NotImplementedException();
+            if (product == null) return false;
+
+            _context.Products.Add(new Product
+            {
+                Name = product.Name,
+                Price = product.Price,
+                QuantityInStock = product.QuantityInStock
+            });
+
+            await _context.SaveChangesAsync();
+            return true;
         }
 
-        public Task<bool> DeleteProduct(int productId)
+        public async Task<bool> DeleteProduct(int productId)
         {
-            throw new NotImplementedException();
+            var product = await _context.Products.FindAsync(productId);
+            if (product is null)
+                return false;
+            _context.Products.Remove(product);
+            await _context.SaveChangesAsync();
+            return true;
         }
 
-        public Task<CustomerDetail> GetProduct(int productId)
+        public async Task<ProductDetailModel> GetProduct(int? productId)
         {
-            throw new NotImplementedException();
+            return (productId !=null) ? await _context.Products.Select(p => new ProductDetailModel
+            {
+                Id = p.Id,
+                Name = p.Name,
+                QuantityInStock = p.QuantityInStock,
+                Price = p.Price
+            }).FirstOrDefaultAsync(m => m.Id == productId) : null;
+            
         }
 
-        public Task<IEnumerable<ProductIndexModel>> GetProducts()
+        public async Task<IEnumerable<ProductIndexModel>> GetProducts()
         {
-            throw new NotImplementedException();
+            var products = await _context.Products.Select(p => new ProductIndexModel
+            {
+                Id = p.Id,
+                Name = p.Name,
+                QuantityInStock = p.QuantityInStock,
+                Price = p.Price
+            }).ToListAsync();
+
+            return products;
         }
 
-        public Task<bool> UpdateProduct(int productId, ProductEditModel product)
+        public async Task<bool> UpdateProduct(int productId, ProductEditModel product)
         {
-            throw new NotImplementedException();
+            var productInDb = await _context.Products.FindAsync(productId);
+            if (productInDb is null)
+                return false;
+
+            if (productInDb!=null)
+            {
+                productInDb.Name = product.Name;
+                productInDb.Price = product.Price;
+                productInDb.QuantityInStock = product.QuantityInStock;
+                try
+                {
+                    _context.Update(productInDb);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ProductExist(productInDb.Id))
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+            return false;
+        }
+
+        private bool ProductExist(int id)
+        {
+            return _context.Products.Any(p => p.Id == id);
         }
     }
 }

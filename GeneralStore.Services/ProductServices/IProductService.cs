@@ -12,7 +12,7 @@ namespace GeneralStore.Services.ProductServices
     {
         Task<bool> CreateProduct(ProductCreateModel product);
         Task<IEnumerable<ProductIndexModel>> GetProducts();
-        Task<CustomerDetail> GetProduct(int productId);
+        Task<ProductDetailModel> GetProduct(int? productId);
         Task<bool> UpdateProduct(int productId, ProductEditModel product);
         Task<bool> DeleteProduct(int productId);
     }
