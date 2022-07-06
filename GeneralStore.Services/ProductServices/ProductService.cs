@@ -77,9 +77,9 @@ namespace GeneralStore.Services.ProductServices
 
             if (productInDb!=null)
             {
-                //productInDb.Name = product.Name;
-                //productInDb.Price = product.Price;
-                //productInDb.QuantityInStock = product.QuantityInStock;
+                productInDb.Name = product.Name;
+                productInDb.Price = product.Price;
+                productInDb.QuantityInStock = product.QuantityInStock;
                 try
                 {
                     _context.Update(productInDb);

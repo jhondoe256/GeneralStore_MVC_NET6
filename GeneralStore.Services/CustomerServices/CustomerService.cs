@@ -82,12 +82,13 @@ namespace GeneralStore.Services.CustomerServices
 
             if (customerInDb != null)
             {
-                //customerInDb.Name = customer.Name;
-                //customerInDb.Email = customer.Email;
+                customerInDb.Name = customer.Name;
+                customerInDb.Email = customer.Email;
                 try
                 {
                     _context.Update(customerInDb);
                     await _context.SaveChangesAsync();
+                    return true;
                 }
                 catch (DbUpdateConcurrencyException)
                 {

@@ -98,12 +98,12 @@ namespace GeneralStore.Services.TransactionServices
 
             if (transactionInDb != null)
             {
-                //transactionInDb.CustomerId = transaction.CustomerId;
-                //transactionInDb.ProductId = transaction.ProductId;
+                transactionInDb.CustomerId = transaction.CustomerId;
+                transactionInDb.ProductId = transaction.ProductId;
 
                 try
                 {
-                    _context.Update(transactionInDb);
+                    _context.Update(transaction);
                     transactionInDb.DateOfTransaction = DateTime.UtcNow;
                     await _context.SaveChangesAsync();
                 }
