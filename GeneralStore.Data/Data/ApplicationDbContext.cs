@@ -11,8 +11,8 @@ namespace GeneralStore_MVC_NET6.Data
         {
         }
 
-        public DbSet<Customer>Customers { get; set; }
-        public DbSet<Product>Products { get; set; }
-        public DbSet<Transaction>Transactions{ get; set; }
+        public DbSet<CustomerEntity>Customers { get; set; }
+        public DbSet<ProductEntity>Products { get; set; }
+        public DbSet<TransactionEntity>Transactions{ get; set; }
     }
 }

@@ -10,12 +10,10 @@ namespace GeneralStore.Models.TransactionModels
     public class TransactionDetailModel
     {
         public int Id { get; set; }
-        public int ProductId { get; set; }
-        public int CustomerId { get; set; }
+        public string ProductName { get; set; }
+        public string CustomerName { get; set; }
         public int Quantity { get; set; }
+        public double TotalPrice { get; set; }
         public DateTime DateOfTransaction { get; set; }
-
-        public virtual Customer Customer { get; set; } = null!;  //this as well?
-        public virtual Product Product { get; set; } = null!;
     }
 }

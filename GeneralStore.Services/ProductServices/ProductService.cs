@@ -23,7 +23,7 @@ namespace GeneralStore.Services.ProductServices
         {
             if (product == null) return false;
 
-            _context.Products.Add(new Product
+            _context.Products.Add(new ProductEntity
             {
                 Name = product.Name,
                 Price = product.Price,
