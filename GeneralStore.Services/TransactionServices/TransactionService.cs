@@ -92,7 +92,7 @@ namespace GeneralStore.Services.TransactionServices
 
         public async Task<bool> UpdateTransaction(int customerId, TransactionEditModel transaction)
         {
-            var transactionInDb = await _context.Transactions.FindAsync(transaction);
+            var transactionInDb = await _context.Transactions.FindAsync(transaction.Id);
             if (transactionInDb is null)
                 return false;
 
@@ -100,12 +100,14 @@ namespace GeneralStore.Services.TransactionServices
             {
                 transactionInDb.CustomerId = transaction.CustomerId;
                 transactionInDb.ProductId = transaction.ProductId;
+                transactionInDb.Quantity= transaction.Quantity;
 
                 try
                 {
-                    _context.Update(transaction);
+                    _context.Update(transactionInDb);
                     transactionInDb.DateOfTransaction = DateTime.UtcNow;
                     await _context.SaveChangesAsync();
+                    return true;
                 }
                 catch (DbUpdateConcurrencyException)
                 {
