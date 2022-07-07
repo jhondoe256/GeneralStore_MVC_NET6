@@ -67,6 +67,38 @@ namespace GeneralStore.Services.TransactionServices
             };
         }
 
+        public async Task<IEnumerable<TransactionListItem>> GetTransactionsForCustomer(int customerId)
+        {
+            var transactions = await _context.Transactions
+                .Where(t => t.CustomerId == customerId)
+                .Include(t => t.Customer)
+                .Include(t => t.Product)
+                .Select(t => new TransactionListItem
+                {
+                    Id = t.Id,
+                    ProductName = t.Product.Name,
+                    CustomerName = t.Customer.Name,
+                    Quantity = t.Quantity,
+                }).ToListAsync();
+            return transactions;
+        }
+
+        public async Task<IEnumerable<TransactionListItem>> GetTransactionsForProduct(int productId)
+        {
+            var transactions = await _context.Transactions
+                .Where(t => t.ProductId == productId)
+                .Include(t => t.Customer)
+                .Include(t => t.Product)
+                .Select(t => new TransactionListItem
+                {
+                    Id = t.Id,
+                    ProductName = t.Product.Name,
+                    CustomerName = t.Customer.Name,
+                    Quantity = t.Quantity,
+                }).ToListAsync();
+            return transactions;
+        }
+
         public async Task<IEnumerable<TransactionListItem>> ListTransactions()
         {
             var transactions = await _context.Transactions
