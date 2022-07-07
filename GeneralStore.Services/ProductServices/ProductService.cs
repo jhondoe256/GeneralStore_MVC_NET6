@@ -84,6 +84,7 @@ namespace GeneralStore.Services.ProductServices
                 {
                     _context.Update(productInDb);
                     await _context.SaveChangesAsync();
+                    return true;
                 }
                 catch (DbUpdateConcurrencyException)
                 {
