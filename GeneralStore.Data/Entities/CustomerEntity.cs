@@ -9,8 +9,8 @@ namespace GeneralStore.Data.Entities
     public class CustomerEntity
     {
         public int Id { get; set; }
-        public string? Name { get; set; }
-        public string? Email { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
 
         public virtual List<TransactionEntity> Transactions { get; set; }
     }

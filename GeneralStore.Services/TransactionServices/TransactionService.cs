@@ -23,10 +23,10 @@ namespace GeneralStore.Services.TransactionServices
         {
             var entity = new TransactionEntity
             {
-                CustomerId=transaction.CustomerId,
-                ProductId=transaction.ProductId,
-                Quantity=transaction.Quantity,
-                DateOfTransaction=DateTime.Now
+                CustomerId = transaction.CustomerId,
+                ProductId = transaction.ProductId,
+                Quantity = transaction.Quantity,
+                DateOfTransaction = DateTime.Now
             };
 
             _context.Transactions.Add(entity);
@@ -39,9 +39,9 @@ namespace GeneralStore.Services.TransactionServices
             var transaction = await _context.Transactions.FindAsync(customerId);
             if (transaction is null)
                 return false;
-           
+
             _context.Transactions.Remove(transaction);
-            
+
             await _context.SaveChangesAsync();
             return true;
         }
@@ -52,7 +52,7 @@ namespace GeneralStore.Services.TransactionServices
                 .Include(t => t.Customer)
                 .Include(t => t.Product)
                 .FirstOrDefaultAsync(t => t.Id == transactionId);
-           
+
             if (transaction is null)
                 return null;
 
@@ -108,48 +108,24 @@ namespace GeneralStore.Services.TransactionServices
                 {
                     Id = t.Id,
                     ProductName = t.Product.Name,
+                    CustomerName = t.Customer.Name,
                     Quantity = t.Quantity,
                 }).ToListAsync();
             return transactions;
         }
 
-        public async Task<bool> UpdateTransaction(int customerId, TransactionEditModel transaction)
+        public async Task<bool> UpdateTransaction(int customerId, TransactionEditModel model)
         {
-            var transactionInDb = await _context.Transactions.FindAsync(transaction.Id);
-            if (transactionInDb is null)
-                return false;
+            var transaction = await _context.Transactions.FindAsync(model.Id);
+            if (transaction is null) return false;
 
-            if (transactionInDb != null)
-            {
-                transactionInDb.CustomerId = transaction.CustomerId;
-                transactionInDb.ProductId = transaction.ProductId;
-                transactionInDb.Quantity= transaction.Quantity;
+            transaction.CustomerId = transaction.CustomerId;
+            transaction.ProductId = transaction.ProductId;
+            transaction.Quantity = transaction.Quantity;
 
-                try
-                {
-                    _context.Update(transactionInDb);
-                    transactionInDb.DateOfTransaction = DateTime.UtcNow;
-                    await _context.SaveChangesAsync();
-                    return true;
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!TransactionExist(transactionInDb.Id))
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-            }
+            _context.Update(transaction);
+            if (await _context.SaveChangesAsync() == 1) return true;
             return false;
-        }
-
-        private bool TransactionExist(int id)
-        {
-            return _context.Products.Any(p => p.Id == id);
         }
     }
 }
