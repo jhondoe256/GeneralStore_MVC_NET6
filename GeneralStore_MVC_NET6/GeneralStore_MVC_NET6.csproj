@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-GeneralStore_MVC_NET6-72F6A7DF-75C1-409E-8DB8-FD37262A07F3</UserSecretsId>
   </PropertyGroup>

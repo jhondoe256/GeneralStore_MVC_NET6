@@ -22,7 +22,7 @@ namespace GeneralStore.Services.CustomerServices
         {
             if (customer != null)
             {
-                _context.Customers.Add(new Customer
+                _context.Customers.Add(new CustomerEntity
                 {
                     Name = customer.Name,
                     Email = customer.Email

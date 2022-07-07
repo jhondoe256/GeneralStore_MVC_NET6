@@ -21,22 +21,12 @@ namespace GeneralStore.Services.TransactionServices
         }
         public async Task<bool> CreateTransaction(TransactionCreateModel transaction)
         {
-            var customerInDb = await _context.Customers.FindAsync(transaction.CustomerId);
-            if (customerInDb == null)
-                return false;
-           
-            var productInDb = await _context.Products.FindAsync(transaction.ProductId);
-            if (productInDb == null)
-                return false;
-
-            var entity = new Transaction
+            var entity = new TransactionEntity
             {
-                CustomerId=customerInDb.Id,
-                Customer=customerInDb,
-                ProductId=productInDb.Id,
-                Product=productInDb,
-                Quantity=transaction.Quantity,
-                DateOfTransaction=DateTime.Now
+                CustomerId = transaction.CustomerId,
+                ProductId = transaction.ProductId,
+                Quantity = transaction.Quantity,
+                DateOfTransaction = DateTime.Now
             };
 
             _context.Transactions.Add(entity);
@@ -49,84 +39,93 @@ namespace GeneralStore.Services.TransactionServices
             var transaction = await _context.Transactions.FindAsync(customerId);
             if (transaction is null)
                 return false;
-           
+
             _context.Transactions.Remove(transaction);
-            
+
             await _context.SaveChangesAsync();
             return true;
         }
 
-        public async Task<TransactionDetailModel> GetTransaction(int? customerId)
+        public async Task<TransactionDetailModel> GetTransaction(int transactionId)
         {
-            if (customerId == null)
-                return null;
-            
-            var transaction = await _context.Transactions.Include(t => t.Customer).Include(t => t.Product).FirstOrDefaultAsync(m => m.Id == customerId);
-           
+            var transaction = await _context.Transactions
+                .Include(t => t.Customer)
+                .Include(t => t.Product)
+                .FirstOrDefaultAsync(t => t.Id == transactionId);
+
             if (transaction is null)
                 return null;
 
             return new TransactionDetailModel
             {
-                Id=transaction.Id,
-                CustomerId=transaction.CustomerId,
-                ProductId=transaction.ProductId,
-                Product=transaction.Product,
-                Customer=transaction.Customer,
-                DateOfTransaction=transaction.DateOfTransaction,
-                Quantity=transaction.Quantity,
+                Id = transaction.Id,
+                CustomerName = transaction.Customer.Name,
+                ProductName = transaction.Product.Name,
+                DateOfTransaction = transaction.DateOfTransaction,
+                TotalPrice = transaction.Product.Price * transaction.Quantity,
+                Quantity = transaction.Quantity,
             };
         }
 
-        public async Task<IEnumerable<TransactionListItem>> ListTransactions()
+        public async Task<IEnumerable<TransactionListItem>> GetTransactionsForCustomer(int customerId)
         {
-            var transactions = await _context.Transactions.Include(t => t.Customer).Include(t => t.Product)
+            var transactions = await _context.Transactions
+                .Where(t => t.CustomerId == customerId)
+                .Include(t => t.Customer)
+                .Include(t => t.Product)
                 .Select(t => new TransactionListItem
                 {
                     Id = t.Id,
-                    CustomerId = t.CustomerId,
-                    ProductId = t.ProductId,
+                    ProductName = t.Product.Name,
+                    CustomerName = t.Customer.Name,
+                    Quantity = t.Quantity,
                 }).ToListAsync();
             return transactions;
         }
 
-        public async Task<bool> UpdateTransaction(int customerId, TransactionEditModel transaction)
+        public async Task<IEnumerable<TransactionListItem>> GetTransactionsForProduct(int productId)
         {
-            var transactionInDb = await _context.Transactions.FindAsync(transaction.Id);
-            if (transactionInDb is null)
-                return false;
-
-            if (transactionInDb != null)
-            {
-                transactionInDb.CustomerId = transaction.CustomerId;
-                transactionInDb.ProductId = transaction.ProductId;
-                transactionInDb.Quantity= transaction.Quantity;
-
-                try
+            var transactions = await _context.Transactions
+                .Where(t => t.ProductId == productId)
+                .Include(t => t.Customer)
+                .Include(t => t.Product)
+                .Select(t => new TransactionListItem
                 {
-                    _context.Update(transactionInDb);
-                    transactionInDb.DateOfTransaction = DateTime.UtcNow;
-                    await _context.SaveChangesAsync();
-                    return true;
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!TransactionExist(transactionInDb.Id))
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-            }
-            return false;
+                    Id = t.Id,
+                    ProductName = t.Product.Name,
+                    CustomerName = t.Customer.Name,
+                    Quantity = t.Quantity,
+                }).ToListAsync();
+            return transactions;
         }
 
-        private bool TransactionExist(int id)
+        public async Task<IEnumerable<TransactionListItem>> ListTransactions()
         {
-            return _context.Products.Any(p => p.Id == id);
+            var transactions = await _context.Transactions
+                .Include(t => t.Customer)
+                .Include(t => t.Product)
+                .Select(t => new TransactionListItem
+                {
+                    Id = t.Id,
+                    ProductName = t.Product.Name,
+                    CustomerName = t.Customer.Name,
+                    Quantity = t.Quantity,
+                }).ToListAsync();
+            return transactions;
+        }
+
+        public async Task<bool> UpdateTransaction(int customerId, TransactionEditModel model)
+        {
+            var transaction = await _context.Transactions.FindAsync(model.Id);
+            if (transaction is null) return false;
+
+            transaction.CustomerId = transaction.CustomerId;
+            transaction.ProductId = transaction.ProductId;
+            transaction.Quantity = transaction.Quantity;
+
+            _context.Update(transaction);
+            if (await _context.SaveChangesAsync() == 1) return true;
+            return false;
         }
     }
 }

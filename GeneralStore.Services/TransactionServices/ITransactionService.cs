@@ -12,7 +12,9 @@ namespace GeneralStore.Services.TransactionServices
     {
         Task<bool> CreateTransaction(TransactionCreateModel transaction);
         Task<IEnumerable<TransactionListItem>> ListTransactions();
-        Task<TransactionDetailModel> GetTransaction(int? transactionId);
+        Task<IEnumerable<TransactionListItem>> GetTransactionsForCustomer(int customerId);
+        Task<IEnumerable<TransactionListItem>> GetTransactionsForProduct(int productId);
+        Task<TransactionDetailModel> GetTransaction(int transactionId);
         Task<bool> UpdateTransaction(int transactionId, TransactionEditModel transaction);
         Task<bool> DeleteTransaction(int transactionId);
     }

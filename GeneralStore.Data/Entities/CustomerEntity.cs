@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace GeneralStore.Data.Entities
 {
-    public class Customer
+    public class CustomerEntity
     {
         public int Id { get; set; }
-        public string? Name { get; set; }
-        public string? Email { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
 
-        public virtual List<Transaction> Transactions { get; set; }
+        public virtual List<TransactionEntity> Transactions { get; set; }
     }
 }

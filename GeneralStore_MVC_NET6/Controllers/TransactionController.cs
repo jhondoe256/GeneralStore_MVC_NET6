@@ -29,10 +29,8 @@ namespace GeneralStore_MVC_NET6.Controllers
             return View(transactions);
         }
 
-        public async Task<IActionResult> Detail(int? id)
+        public async Task<IActionResult> Detail(int id)
         {
-            if (id == null) return BadRequest();
-
             var transaction = await _transactionService.GetTransaction(id);
             if (transaction is null) return NotFound();
 
@@ -61,10 +59,8 @@ namespace GeneralStore_MVC_NET6.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> Update(int? id)
+        public async Task<IActionResult> Update(int id)
         {
-            if (id == null) return BadRequest();
-
             var transaction = await _transactionService.GetTransaction(id);
             if (transaction is null) return NotFound();
 
@@ -84,10 +80,8 @@ namespace GeneralStore_MVC_NET6.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null) return BadRequest();
-
             var transaction = await _transactionService.GetTransaction(id);
             if (transaction is null) return NotFound();
 
@@ -96,9 +90,9 @@ namespace GeneralStore_MVC_NET6.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(TransactionDetailModel model)
         {
-            if (await _transactionService.DeleteTransaction(id))
+            if (await _transactionService.DeleteTransaction(model.Id))
                 return RedirectToAction(nameof(Index));
 
             return UnprocessableEntity();

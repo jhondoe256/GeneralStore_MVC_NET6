@@ -21,7 +21,7 @@ namespace GeneralStore_MVC_NET6.Controllers
         }
         
         [HttpGet]
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
             return View();
         }
