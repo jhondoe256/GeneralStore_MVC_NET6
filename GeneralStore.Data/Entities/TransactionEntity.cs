@@ -13,7 +13,6 @@ namespace GeneralStore.Data.Entities
         public int CustomerId { get; set; }
         public int Quantity { get; set; }
         public DateTime DateOfTransaction { get; set; }
-        // Ignore these warnings - these shouldn't ever be null
         public virtual CustomerEntity Customer { get; set; }
         public virtual ProductEntity Product { get; set; }
     }
